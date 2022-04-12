@@ -14,21 +14,21 @@ public class CafeManha {
 		String dbusername = "root";
 		String dbpassword = "JMh#241128";
 
-		String dbnome = "";
-
 		try {
 			Connection connection = DriverManager.getConnection(jdbcURL, dbusername, dbpassword);
 
 			if (connection != null) {
 				System.out.println("Conectado ao banco de dados!");
+
+				// CafeManha.addUser(connection, "", "", "");
+				// CafeManha.addUser(connection, "", "", "");
+
+				// CafeManha.listUsers(connection);
+
+				// CafeManha.updateUsers(connection, "BRuno", "0000000000", "peixe");
 				
-				
-				//CafeManha.addUser(connection, "", "", "");
-				//CafeManha.addUser(connection, "", "", "");
-				
-				
-				//CafeManha.listUsers( connection );
-				
+				CafeManha.deleteUser( connection, "Guilherme" );
+
 				connection.close();
 			}
 		} catch (SQLException ex) {
@@ -58,24 +58,61 @@ public class CafeManha {
 		}
 	}
 
-	
-	public static void listUsers( Connection connection ) {
+	public static void listUsers(Connection connection) {
 		try {
 			String sql = "SELECT * FROM usuarios";
 			Statement statement = connection.createStatement();
 			ResultSet result = statement.executeQuery(sql);
-			
+
 			int count = 0;
-			
+
 			while (result.next()) {
 				String username = result.getString("nome");
 				String cpf = result.getString("cpf");
 				String prato = result.getString("prato");
-				
+
 				System.out.println(username + "," + cpf + "," + prato);
 			}
-		} catch ( Exception e ) {
+		} catch (Exception e) {
 			System.out.println("Erro ao listar usuarios.");
+		}
+	}
+
+	public static void updateUsers(Connection connection, String nome, String cpf, String prato) {
+		try {
+			String sql = "UPDATE usuarios SET nome=?, cpf=?, prato=? WHERE nome=?";
+
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, nome);
+			statement.setString(2, cpf);
+			statement.setString(3, prato);
+			statement.setString(4, nome);
+
+			int rowsUpdated = statement.executeUpdate();
+
+			if (rowsUpdated > 0) {
+				System.out.println("Atualizado com sucesso!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Erro ao atualizar usuario.");
+		}
+	}
+
+	public static void deleteUser(Connection connection, String nome) {
+		try {
+			String sql = "DELETE FROM usuarios WHERE nome=?";
+
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, nome);
+
+			int rowsDeleted = statement.executeUpdate();
+
+			if (rowsDeleted > 0) {
+				System.out.println("Excluído com sucesso!");
+			}
+		} catch (Exception e) {
+			System.out.println("Erro ao deletar usuário.");
 		}
 	}
 }
